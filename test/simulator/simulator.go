@@ -11,6 +11,8 @@ import (
     "fmt"
     "math/rand"
     "encoding/json"
+    "net/http"
+    "bytes"
 )
 
 type TankInfo struct {
@@ -24,7 +26,7 @@ func main() {
     args := os.Args
     simLoopDuration := 10 * time.Second // 10 seconds
     if len(args) > 1 {
-        if(args[1] == "-real" || args[1] == "-r") {
+        if(args[1] == "--real" || args[1] == "-r") {
             simLoopDuration = (30 * time.Minute) // End app will only generate a datapoint every 30 minutes hopefully
         }
     }
@@ -44,9 +46,17 @@ func main() {
         if err != nil {
             fmt.Println("error:", err)
         }
+        fmt.Println("JSON data:", string(b))
 
-        // TODO: send an actual request to a server.
-        fmt.Println(string(b))
+        // Send POST with Json data
+        res, err := http.Post("http://localhost:8080/newData", "application/json", bytes.NewBuffer(b))
+        if err != nil {
+            fmt.Println("Error sending Post Request:", err)
+        } else {
+            fmt.Println("Successful POST with code", res.Status)
+        }
+
+        // Delay
         time.Sleep(simLoopDuration)
     }
 }

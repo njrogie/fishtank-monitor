@@ -4,16 +4,17 @@ import (
     "fmt"
     "log"
     "net/http"
+    "io/ioutil"
 )
 
 func main() {
-    fileServer := http.FileServer(http.Dir("../web/html/"))
-    http.Handle("/", fileServer)
+    /*fileServer := http.FileServer(http.Dir("../web/html/"))
+    http.Handle("/", fileServer)*/
 
+    http.HandleFunc("/newData", newDataHandler)
     http.HandleFunc("/hello", helloHandler)
-    http.HandleFunc("/form", formHandler)
 
-    fmt.Printf("Starting server at port 8080\n")
+    fmt.Printf("Starting Fishtank Monitor Server\n")
     if err:= http.ListenAndServe(":8080",nil); err != nil {
         log.Fatal(err)
     }
@@ -32,15 +33,16 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w,"Hello!")
 }
 
-func formHandler(w http.ResponseWriter, r *http.Request) {
-    if err := r.ParseForm(); err != nil {
-        fmt.Fprintf(w, "ParseForm() err: %v", err)
+func newDataHandler(w http.ResponseWriter, r *http.Request) {
+    if r.URL.Path != "/newData" {
+        http.Error(w, "400 Bad Request.", http.StatusBadRequest)
         return
     }
-    fmt.Fprintf(w, "POST request successful")
-    name := r.FormValue("name")
-    address := r.FormValue("address")
 
-    fmt.Fprintf(w, "Name = %s\n", name)
-    fmt.Fprintf(w, "Address = %s\n", address)
+    if r.Method != "POST" {
+        http.Error(w, "Method is not supported.", http.StatusBadRequest)
+        return
+    }
+    body, _ := ioutil.ReadAll(r.Body)
+    fmt.Println(string(body))
 }
