@@ -7,6 +7,14 @@ import (
     "io/ioutil"
 )
 
+
+// TODO: SQL server interaction
+type TankInfo struct {
+    Tank_ID int
+    Temperature float32
+    Ph float32
+}
+
 func main() {
     /*fileServer := http.FileServer(http.Dir("../web/html/"))
     http.Handle("/", fileServer)*/
@@ -45,4 +53,11 @@ func newDataHandler(w http.ResponseWriter, r *http.Request) {
     }
     body, _ := ioutil.ReadAll(r.Body)
     fmt.Println(string(body))
+}
+
+// Send to database
+
+func sendDatabaseData(json []byte){
+    // Parse json into type structure
+
 }
