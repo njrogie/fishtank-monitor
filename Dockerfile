@@ -6,8 +6,9 @@ WORKDIR /app
 
 RUN go mod download
 
-COPY *.go ./
-
+COPY source/*.go ./
+COPY source/go.mod ./
+COPY source/go.sum ./
 COPY source/*.go ./
 
 RUN go build -o fishtank-container

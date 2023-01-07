@@ -3,12 +3,16 @@ As my wife began to accumulate reptile and fishtanks (we have lots of pets!), I 
 
 I took this opportunity to start learning some cloud development. This is a pretty ambitious first web project, since it incorporates frontend, backend, and db handling, but I've tackled small aspects of each before so I figured I would give it a shot. As an professional embedded apps & systems engineer, I have always lost motivation doing web stuff because I could never find a project that was fun. But now that that barrier is out of the way, I went to work and began coding.
 
+## Dependencies
+- Golang 
+- Microcontroller ISP for whatever microcontroller you use (arduino or other)
+
 ## Components
 ### 1.) HTTP API Container - Golang (/source)
 This server does all of the data handling between the database, frontend server, and microcontroller. It's packaged into a container so I can easily port it to Azure/AWS/whatever. 
 
-### 2.) API Test Simulator - Golang (/test/simulator)
-This is what I used to test our api container. You can start this program with the command arg **-r** to make real-time data points (every 30 mins) rather than test data points (every 10 seconds). This is meant to run on desktop parallel to the HTTP API.
+### 2.) API Data Simulator - Golang (/test/simulator)
+This is what I used to test our api container's main function, which is moving data around. It generates random data into HTTP Post requests periodically. You can start this program with the command arg **-r** to make real-time data points (every 30 mins) rather than test data points (every 10 seconds). This is meant to run on desktop parallel to the HTTP API.
 
 ### 3.) Microcontroller code - C++ (main\_routine)
 The brains accumulating all of the data for me is an ESP32-CAM microcontroller. I do plan on adding live video feed of my Leopard Gecko to the website eventually. 
@@ -19,3 +23,6 @@ The main purpose of making this project open-source is to show other people how 
 - The API key can be anything you want, I'd recommend you make it a little complicated. When testing, place the key in /app/key unless you alter it otherwise. 
 - More to come...
 
+## Special Thanks
+- Thanks to my wife and her passion to take care of so many cool interesting animals 
+- Thanks to Bunsenlabs; I did all development on a tiny little laptop I loaded their Debian distrubtion onto. It's very smooth and perfect for development.

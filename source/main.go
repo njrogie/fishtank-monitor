@@ -7,27 +7,21 @@ import (
     "strings"
     "net/http"
     "io/ioutil"
+    "github.com/cockroachdb/cockroach-go"
 )
-
-
-// TODO: SQL server interaction
-type TankInfo struct {
-    Tank_ID int
-    Temperature float32
-    Ph float32
-}
 
 func main() {
     /*fileServer := http.FileServer(http.Dir("../web/html/"))
     http.Handle("/", fileServer)*/
-
+ 
+    initConnection()
     http.HandleFunc("/newData", newDataHandler)
 
     // Take this out in prod!
     http.HandleFunc("/testRequest", testRequest)
 
     fmt.Printf("Starting Fishtank Monitor Server\n")
-    if err:= http.ListenAndServe(":8080",nil); err != nil {
+    if err:= http.ListenAndServe(":23000",nil); err != nil {
         log.Fatal(err)
     }
 }
@@ -49,6 +43,8 @@ func newDataHandler(w http.ResponseWriter, r *http.Request) {
     if isRequestFromAuth(r) {
         body, _ := ioutil.ReadAll(r.Body)
         fmt.Println("Received datapoint: ", string(body))
+        // Parse body into database
+        sendToDatabase(body)
     } else {
         fmt.Println("Denied request; no key matches key file.")
     }
