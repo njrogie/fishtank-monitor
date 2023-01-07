@@ -44,10 +44,11 @@ func newDataHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Auth (?)
+    // Ensure user is authenticated to be able to post data
+    // CREATE KEY IN /app/key 
     if isRequestFromAuth(r) {
         body, _ := ioutil.ReadAll(r.Body)
-        fmt.Println(string(body))
+        fmt.Println("Received datapoint: ", string(body))
     } else {
         fmt.Println("Denied request; no key matches key file.")
     }
@@ -58,7 +59,6 @@ func isRequestFromAuth(r *http.Request) bool {
         authKey := r.URL.Query()["key"]
         dat, err := os.ReadFile("/app/key")
         if err == nil {
-            fmt.Println(string(dat))
             if strings.TrimSpace(string(dat)) == authKey[0] {
                 return true
             }

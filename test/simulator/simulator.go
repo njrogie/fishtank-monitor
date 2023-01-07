@@ -13,6 +13,7 @@ import (
     "encoding/json"
     "net/http"
     "bytes"
+    "strings"
 )
 
 type TankInfo struct {
@@ -49,7 +50,9 @@ func main() {
         fmt.Println("JSON data:", string(b))
 
         // Send POST with Json data
-        res, err := http.Post("http://localhost:8080/newData", "application/json", bytes.NewBuffer(b))
+        dat, _ := os.ReadFile("/app/key")
+        res, err := http.Post("http://localhost:8080/newData?key=" + strings.TrimSpace(string(dat)), "application/json", bytes.NewBuffer(b))
+
         if err != nil {
             fmt.Println("Error sending Post Request:", err)
         } else {
