@@ -3,6 +3,8 @@ package main
 import (
     "fmt"
     "log"
+    "os"
+    "strings"
     "net/http"
     "io/ioutil"
 )
@@ -20,7 +22,9 @@ func main() {
     http.Handle("/", fileServer)*/
 
     http.HandleFunc("/newData", newDataHandler)
-    http.HandleFunc("/hello", helloHandler)
+
+    // Take this out in prod!
+    http.HandleFunc("/testRequest", testRequest)
 
     fmt.Printf("Starting Fishtank Monitor Server\n")
     if err:= http.ListenAndServe(":8080",nil); err != nil {
@@ -28,19 +32,7 @@ func main() {
     }
 }
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/hello" {
-        http.Error(w, "404 not found.", http.StatusNotFound)
-        return
-    }
-
-    if r.Method != "GET" {
-        http.Error(w, "Method is not supported.", http.StatusNotFound)
-        return
-    }
-    fmt.Fprintf(w,"Hello!")
-}
-
+// Post method for js
 func newDataHandler(w http.ResponseWriter, r *http.Request) {
     if r.URL.Path != "/newData" {
         http.Error(w, "400 Bad Request.", http.StatusBadRequest)
@@ -51,13 +43,35 @@ func newDataHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Method is not supported.", http.StatusBadRequest)
         return
     }
-    body, _ := ioutil.ReadAll(r.Body)
-    fmt.Println(string(body))
+
+    // Auth (?)
+    if isRequestFromAuth(r) {
+        body, _ := ioutil.ReadAll(r.Body)
+        fmt.Println(string(body))
+    } else {
+        fmt.Println("Denied request; no key matches key file.")
+    }
 }
 
-// Send to database
+func isRequestFromAuth(r *http.Request) bool {
+    if r.URL.Query()["key"] != nil {
+        authKey := r.URL.Query()["key"]
+        dat, err := os.ReadFile("/app/key")
+        if err == nil {
+            fmt.Println(string(dat))
+            if strings.TrimSpace(string(dat)) == authKey[0] {
+                return true
+            }
+        }
+    }
+    return false
+}
+
+func testRequest(w http.ResponseWriter, r *http.Request) {
+    // Test whatever I need to while writing code
+    fmt.Fprintf(w, r.URL.Query()["test"][0])
+}
 
 func sendDatabaseData(json []byte){
     // Parse json into type structure
-
 }
