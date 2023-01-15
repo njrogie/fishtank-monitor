@@ -51,7 +51,7 @@ func main() {
 
         // Send POST with Json data
         dat, _ := os.ReadFile("/app/key")
-        res, err := http.Post("http://localhost:8080/newData?key=" + strings.TrimSpace(string(dat)), "application/json", bytes.NewBuffer(b))
+        res, err := http.Post("http://localhost:8081/newData?key=" + strings.TrimSpace(string(dat)), "application/json", bytes.NewBuffer(b))
 
         if err != nil {
             fmt.Println("Error sending Post Request:", err)

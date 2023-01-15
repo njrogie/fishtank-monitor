@@ -7,21 +7,19 @@ import (
     "strings"
     "net/http"
     "io/ioutil"
-    "github.com/cockroachdb/cockroach-go"
 )
 
 func main() {
     /*fileServer := http.FileServer(http.Dir("../web/html/"))
-    http.Handle("/", fileServer)*/
- 
-    initConnection()
+    http.Handle("/", fileServer)*/ 
+    _ = initConnection()
     http.HandleFunc("/newData", newDataHandler)
 
     // Take this out in prod!
     http.HandleFunc("/testRequest", testRequest)
 
     fmt.Printf("Starting Fishtank Monitor Server\n")
-    if err:= http.ListenAndServe(":23000",nil); err != nil {
+    if err:= http.ListenAndServe(":8081",nil); err != nil {
         log.Fatal(err)
     }
 }
