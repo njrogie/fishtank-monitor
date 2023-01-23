@@ -16,9 +16,9 @@ docker run -d --name roach --hostname db --network mynet -p 26257:26257 -p 8080:
     --insecure
 
 docker exec roach ./cockroach sql --insecure --execute "CREATE DATABASE mydb;"
-docker exec roach ./cockroach sql --insecure --execute "CREATE USER me;"
-docker exec roach ./cockroach sql --insecure --execute "GRANT ALL ON DATABASE mydb TO me"
-docker exec roach ./cockroach sql --insecure --execute "CREATE TABLE IF NOT EXISTS ftdata (\
+docker exec roach ./cockroach sql --insecure --execute "CREATE USER nick;"
+docker exec roach ./cockroach sql --insecure --execute "GRANT ALL ON DATABASE mydb TO nick"
+docker exec roach ./cockroach sql --insecure --execute "CREATE TABLE IF NOT EXISTS mydb.ftdata (\
     EntryTime TIMESTAMP PRIMARY KEY,\
     Tank_ID int,\
     Temperature FLOAT,\

@@ -4,16 +4,15 @@ import (
     "fmt"
     "log"
     "os"
+    "database/sql"
     "strings"
     "net/http"
     "io/ioutil"
 )
 
 func main() {
-    /*fileServer := http.FileServer(http.Dir("../web/html/"))
-    http.Handle("/", fileServer)*/ 
-    _ = initConnection()
-    http.HandleFunc("/newData", newDataHandler)
+    db := initConnection()
+    http.HandleFunc("/newData", newDataWrapper(db))
 
     // Take this out in prod!
     http.HandleFunc("/testRequest", testRequest)
@@ -24,16 +23,25 @@ func main() {
     }
 }
 
+
+func newDataWrapper(db *sql.DB) http.HandlerFunc{
+    return func(w http.ResponseWriter, r *http.Request) {
+        body := newDataHandler(w,r)
+        // Parse body into database
+        sendToDatabase(db, body)
+    }
+
+}
 // Post method for js
-func newDataHandler(w http.ResponseWriter, r *http.Request) {
+func newDataHandler(w http.ResponseWriter, r *http.Request) []byte {
     if r.URL.Path != "/newData" {
         http.Error(w, "400 Bad Request.", http.StatusBadRequest)
-        return
+        return nil
     }
 
     if r.Method != "POST" {
         http.Error(w, "Method is not supported.", http.StatusBadRequest)
-        return
+        return nil
     }
 
     // Ensure user is authenticated to be able to post data
@@ -41,10 +49,10 @@ func newDataHandler(w http.ResponseWriter, r *http.Request) {
     if isRequestFromAuth(r) {
         body, _ := ioutil.ReadAll(r.Body)
         fmt.Println("Received datapoint: ", string(body))
-        // Parse body into database
-        sendToDatabase(body)
+        return body
     } else {
         fmt.Println("Denied request; no key matches key file.")
+        return nil
     }
 }
 
@@ -66,6 +74,3 @@ func testRequest(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, r.URL.Query()["test"][0])
 }
 
-func sendDatabaseData(json []byte){
-    // Parse json into type structure
-}
