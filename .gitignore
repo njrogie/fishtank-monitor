@@ -38,4 +38,5 @@
 !*.*
 *.swp
 *.swo
-source/fishtankmonitor
+
+fishtank-api
